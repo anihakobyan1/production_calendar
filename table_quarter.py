@@ -42,9 +42,12 @@ class TableQuarter:
                     non_work_days += 1
 
         calc_work_days = days_in_month - (len(holidays_this_month) + non_work_days)
-        for day, m in self.special_days.items():
-            if m == month:
-                calc_work_days += 1
+
+        # Only add pre-holidays if the country is Russia
+        if self.country == 'russia':
+            for day, m in self.special_days.items():
+                if m == month:
+                    calc_work_days += 1
 
         calc_holi_days = days_in_month - calc_work_days
         return days_in_month, calc_work_days, calc_holi_days, preholidays_this_month
@@ -74,9 +77,9 @@ class TableQuarter:
                 holi_days.append(holidays)
 
                 # Calculate hours
-                hours_40.append((work * 8) - len(preholidays))
-                hours_36.append((work * 7.2) - len(preholidays))
-                hours_24.append((work * 4.8) - len(preholidays))
+                hours_40.append((work * 8) - (len(preholidays) if self.country == 'russia' else 0))
+                hours_36.append((work * 7.2) - (len(preholidays) if self.country == 'russia' else 0))
+                hours_24.append((work * 4.8) - (len(preholidays) if self.country == 'russia' else 0))
 
         else:
             columns.extend(['I квартал', 'II квартал', 'III квартал', 'IV квартал', 'Итог'])
@@ -95,9 +98,9 @@ class TableQuarter:
                 holi_days.append(holidays)
 
                 # Calculate hours for the quarter
-                hours_40.append((work * 8) - len(preholidays))
-                hours_36.append((work * 7.2) - len(preholidays))
-                hours_24.append((work * 4.8) - len(preholidays))
+                hours_40.append((work * 8) - (len(preholidays) if self.country == 'russia' else 0))
+                hours_36.append((work * 7.2) - (len(preholidays) if self.country == 'russia' else 0))
+                hours_24.append((work * 4.8) - (len(preholidays) if self.country == 'russia' else 0))
 
         data = []
         data.append(columns)  # Add headers
