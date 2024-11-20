@@ -24,8 +24,8 @@ month_mapping = {
 }
 
 
-def get_holidays(year):
-    url = f'https://www.timeanddate.com/holidays/russia/{year}?hol=1'
+def get_holidays(year, country):
+    url = f'https://www.timeanddate.com/holidays/{country.lower()}/{year}?hol=1'
     headers = {'Accept-Language': 'en-US,en;q=0.9'}
 
     # Use CachedSession instead of Session
@@ -53,42 +53,43 @@ def get_holidays(year):
             except ValueError:
                 print(f"Date parsing error for 1: {full_date_str}")
 
-    consultant_url = f'https://www.consultant.ru/law/ref/calendar/proizvodstvennye/{year}/'
+    if country.lower == 'russia':
+        consultant_url = f'https://www.consultant.ru/law/ref/calendar/proizvodstvennye/{year}/'
 
-    try:
-        response = session.get(consultant_url)
-        response.raise_for_status()  # Raise an error for bad responses
-    except requests.RequestException as e:
-        print(f"Error fetching holidays from consultant.ru: {e}")
-        return list(holidays)  # Return whatever holidays were found so far
+        try:
+            response = session.get(consultant_url)
+            response.raise_for_status()  # Raise an error for bad responses
+        except requests.RequestException as e:
+            print(f"Error fetching holidays from consultant.ru: {e}")
+            return list(holidays)  # Return whatever holidays were found so far
 
-    soup = BeautifulSoup(response.text, 'html.parser')
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-    # Find the <ul> element containing the holiday transfers
-    ul_elements = soup.find_all('ul')
-    if ul_elements:
-        target_ul = ul_elements[5]  # Change the index as needed
-        for li in target_ul.find_all('li'):
-            text = li.get_text(strip=True)
-            # Extract the date from the text
-            if 'на' in text:
-                parts = text.split('на')
-                if len(parts) == 2:
-                    date_str = parts[1].strip()  # Get the date part
-                    parts = date_str.split()
-                    date_part = ' '.join(parts[1:])  # Join the parts after the day
-                    date_part = date_part[:-1]  # Remove the last character (usually a period)
+        # Find the <ul> element containing the holiday transfers
+        ul_elements = soup.find_all('ul')
+        if ul_elements:
+            target_ul = ul_elements[5]  # Change the index as needed
+            for li in target_ul.find_all('li'):
+                text = li.get_text(strip=True)
+                # Extract the date from the text
+                if 'на' in text:
+                    parts = text.split('на')
+                    if len(parts) == 2:
+                        date_str = parts[1].strip()  # Get the date part
+                        parts = date_str.split()
+                        date_part = ' '.join(parts[1:])  # Join the parts after the day
+                        date_part = date_part[:-1]  # Remove the last character (usually a period)
 
-                    # Replace full month names with English month names
-                    for full_month, english_month in month_mapping.items():
-                        date_part = date_part.replace(full_month, english_month)
-                    full_date_str = f"{date_part} {year}"
+                        # Replace full month names with English month names
+                        for full_month, english_month in month_mapping.items():
+                            date_part = date_part.replace(full_month, english_month)
+                        full_date_str = f"{date_part} {year}"
 
-                    try:
-                        date_obj = datetime.strptime(full_date_str, "%d %b %Y").date()
-                        holidays.add(date_obj)  # Add date to the set
-                    except ValueError as e:
-                        print(f"Date parsing error for 2: {full_date_str} - {e}")
+                        try:
+                            date_obj = datetime.strptime(full_date_str, "%d %b %Y").date()
+                            holidays.add(date_obj)  # Add date to the set
+                        except ValueError as e:
+                            print(f"Date parsing error for 2: {full_date_str} - {e}")
     return sorted(holidays)  # Return a sorted list of unique holidays
 
 
@@ -152,3 +153,32 @@ def get_preholidays(year):
 
     return preholiday_days  # Return the list of preholiday dates
 
+
+country_names = ['Australia', 'Canada', 'India', 'Ireland', 'New-Zealand',
+ 'United-Kingdom', 'United-States', 'Argentina', 'Brazil',
+ 'China', 'France', 'Germany', 'Greece', 'Italy',
+ 'Japan', 'Mexico', 'Netherlands', 'Russia', 'South-Africa',
+ 'South-Korea', 'Spain', 'Sweden', 'Switzerland',
+ 'Turkey', 'United-Arab-Emirates', 'Vietnam', 'Philippines',
+ 'Singapore', 'Malaysia', 'Thailand', 'Indonesia', 'Pakistan',
+ 'Egypt', 'Saudi-Arabia', 'Colombia', 'Chile', 'Peru',
+ 'Bangladesh', 'Honduras', 'Costa-Rica', 'Dominican-Republic',
+ 'Puerto-Rico', 'Jamaica', 'Iceland', 'Norway', 'Finland',
+ 'Denmark', 'Belgium', 'Austria', 'Switzerland', 'Czechia',
+ 'Slovakia', 'Hungary', 'Portugal', 'Romania', 'Bulgaria',
+ 'Lithuania', 'Latvia', 'Estonia', 'Ukraine', 'Kazakhstan',
+ 'South-Africa', 'Zimbabwe', 'Namibia', 'Botswana',
+ 'Lesotho', 'Eswatini', 'Malawi', 'Zambia', 'Vanuatu',
+ 'Fiji', 'Samoa', 'Tonga', 'Papua-New-Guinea',
+ 'Kiribati', 'Tuvalu', 'Micronesia', 'Marshall-Islands',
+ 'Palau', 'Nauru', 'Solomon-Islands', 'Cook-Islands', 'French-Polynesia', 'New-Caledonia', 'Wallis-and-Futuna',
+ 'Saint-Vincent-and-the-Grenadines', 'Saint-Lucia',
+ 'Saint-Kitts-and-Nevis', 'Grenada', 'Dominica',
+ 'Antigua-and-Barbuda', 'Barbados', 'Bahamas',
+ 'Trinidad-and-Tobago', 'Guyana', 'Suriname',
+ 'Cuba', 'Haiti', 'Dominican-Republic', 'El-Salvador',
+ 'Nicaragua', 'Costa-Rica', 'Panama', 'Colombia',
+ 'Venezuela', 'Ecuador', 'Paraguay', 'Uruguay',
+ 'Chile', 'Argentina', 'Brazil', 'Peru', 'Bolivia',
+ 'Paraguay', 'Guyana', 'Suriname', 'French-Guiana'
+]

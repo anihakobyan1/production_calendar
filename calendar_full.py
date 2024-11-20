@@ -3,14 +3,20 @@ from calendar import monthrange
 from holiday_fetcher import get_holidays, get_preholidays  # Import the holiday fetching function
 
 class CalendarApp:
-    def __init__(self, parent, selected_year, update_year_callback):
+    def __init__(self, parent, selected_year, update_year_callback, country=None):
         self.parent = parent
         self.selected_year = selected_year
         self.update_year_callback = update_year_callback
+        self.country = country.lower()
 
         # Fetch holidays once and store them as an instance variable
-        self.holidays = get_holidays(self.selected_year)
-        self.preholidays = get_preholidays(self.selected_year)
+        self.holidays = get_holidays(self.selected_year, self.country)
+
+        # Only fetch pre-holidays if country is provided
+        if self.country:
+            self.preholidays = get_preholidays(self.selected_year)
+        else:
+            self.preholidays = []  # Or set to None, depending on your logic
 
         # Create label for selected year
         self.year_label = Label(parent, text=f"Производственный календарь {self.selected_year}",
@@ -43,8 +49,14 @@ class CalendarApp:
         """Change the selected year and refresh the holidays."""
         selected_year = self.year_dropdown.get()  # Get the selected year from the Combobox
         self.selected_year = int(selected_year)  # Convert to integer
-        self.holidays = get_holidays(self.selected_year)  # Fetch holidays for the new year
-        self.preholidays = get_preholidays(self.selected_year)
+        self.holidays = get_holidays(self.selected_year, self.country)  # Fetch holidays for the new year
+
+        # Fetch pre-holidays only if country is provided
+        if self.country:
+            self.preholidays = get_preholidays(self.selected_year)
+        else:
+            self.preholidays = []  # Or set to None, depending on your logic
+
         self.year_label.config(text=f"Производственный календарь {self.selected_year}")  # Update the label
         self.show_calendar(self.selected_year)  # Refresh the calendar display
 
@@ -101,7 +113,9 @@ class CalendarApp:
                 # Check if the day is a holiday
                 if day in days:  # Highlight holidays
                     day_label.config(bg='#5da2e3', fg='white')
-                if day in preholiday_days:
+
+                # Check if the day is a pre-holiday only if the country is Russia
+                if self.country == 'russia' and day in preholiday_days:
                     day_label.config(text=f'{day}*')
 
                 # Check if the day is one of the special dates
@@ -115,4 +129,3 @@ class CalendarApp:
 
                 if day_of_week == 6:  # Move to the next row after Sunday
                     day_row += 1
-

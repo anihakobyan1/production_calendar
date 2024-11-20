@@ -2,16 +2,23 @@ import tkinter as tk
 from calendar import monthrange
 from holiday_fetcher import get_holidays, get_preholidays  # Ensure this is available in your environment
 
-
 class TableQuarter:
-    def __init__(self, master, year, start_month, special_days, full=False):
+    def __init__(self, master, country=None, year=2024, start_month=1, special_days=None, full=False):
         self.master = master
         self.year = year
+        self.country = country.lower()
         self.start_month = start_month
-        self.special_days = special_days
+        self.special_days = special_days if special_days else {}
         self.full_year = full
-        self.holidays = get_holidays(year)
-        self.preholidays = get_preholidays(year)
+
+        # Fetch holidays once and store them as an instance variable
+        self.holidays = get_holidays(year, country)
+
+        # Only fetch pre-holidays if country is provided
+        if self.country:
+            self.preholidays = get_preholidays(year)
+        else:
+            self.preholidays = []  # Or set to None, depending on your logic
 
         # Create a frame for the table
         self.table_frame = tk.Frame(self.master)
@@ -129,4 +136,3 @@ class TableQuarter:
         # Configure grid weights to make it responsive
         for i in range(len(self.data[0])):
             self.table_frame.grid_columnconfigure(i, weight=1)
-
