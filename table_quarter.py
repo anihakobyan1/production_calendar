@@ -122,14 +122,14 @@ class TableQuarter:
                 if j == 0:
                     label = tk.Label(self.table_frame, text=item, borderwidth=1, relief="flat", highlightthickness=1,
                                      padx=10, pady=5,
-                                     anchor=tk.W, font=('Arial', 10), bg='white', fg='#061b3b')
+                                     anchor=tk.W, font=('Arial', 11), bg='white', fg='#061b3b')
                 elif i == 0 and j in range(1, len(row)):
                     label = tk.Label(self.table_frame, text=item, borderwidth=1, relief="flat", highlightthickness=1,
                                      pady=5,
                                      font=('Arial', 11), fg='#061b3b', bg='white')
                 else:
                     label = tk.Label(self.table_frame, text=item, borderwidth=1, relief="flat", highlightthickness=1,
-                                     padx=10, pady=5, bg='#c9def2')
+                                     padx=10, pady=5, font=('Arial', 11), bg='#c9def2')
                 if j == 0 and i in (0, 4):
                     label = tk.Label(self.table_frame, text=item, borderwidth=1, relief="flat", highlightthickness=1,
                                      padx=10, pady=5,

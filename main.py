@@ -15,7 +15,8 @@ current_country = 'Russia'  # Initialize the country variable
 
 def update_year(year):
     global current_year
-    current_year = year  # Update the global variable
+    current_year = year
+    default_home()
 
 def default_home():
     clear_content()
@@ -27,9 +28,10 @@ def show_quartiles():
 
     def update_quarter():
         clear_content()
+
         QuarterCalendar(content_frame, current_start_month, current_year, current_country)
         quarter_calendar_frame = Frame(content_frame)
-        quarter_calendar_frame.pack(padx=180, pady=10, fill='both', expand=True)
+        quarter_calendar_frame.pack(padx=180, fill='both', expand=True)
         TableQuarter(quarter_calendar_frame, current_country, current_year, current_start_month, {27: 4, 2: 11, 28: 12})
 
         next_arrow_image = ImageTk.PhotoImage(Image.open("image/next_arrow.png").resize((50, 50)))
@@ -64,34 +66,80 @@ def show_quartiles():
 
 def show_year():
     clear_content()
+
+    # Country and Year Label
+    label_year = Label(content_frame, text=f'Страна: {current_country.capitalize()}  Год: {current_year}',
+                       font=("Verdana", 13, 'bold'), fg='#08224a')
+    label_year.pack(padx=20, anchor='ne')
+
     year_label = Label(content_frame, text=f"Нормы рабочего времени в {current_year} году",
                        font=("Verdana", 20, 'bold'), fg='#08224a')
     year_label.pack(pady=10)
 
-    quarter_calendar_frame = Frame(content_frame, width=1000, height=400)
-    quarter_calendar_frame.pack_propagate(False)
-    quarter_calendar_frame.pack(padx=100, pady=50, fill='both', expand=True)
+    # Create the quarter_calendar_frame with a fixed height
+    quarter_calendar_frame = Frame(content_frame, width=800, height=700)  # Set a fixed height
+    quarter_calendar_frame.pack_propagate(False)  # Prevent it from resizing based on contents
+    quarter_calendar_frame.pack(padx=80, pady=50, fill='both', expand=False)  # Do not expand
 
     TableQuarter(quarter_calendar_frame, current_country, current_year, 1, {27: 4, 2: 11, 28: 12}, full=True)
 
+    # Ensure content_frame maintains its size
+    content_frame.pack_propagate(False)  # Prevent content_frame from resizing
+    content_frame.configure(width=screen_width, height=1000)
+
 def settings():
     clear_content()
-    year_label = Label(content_frame, text="Выбрать страну", font=("Verdana", 14), fg='#08224a')
-    year_label.pack(padx=200, pady=10)
 
-    country_var = StringVar(value=current_country)  # Set default to current country
-    country_dropdown = ttk.Combobox(content_frame, textvariable=country_var,
-                                    values=country_names, state='normal')
-    country_dropdown.pack(pady=10)
+    # Header
+    header = Label(content_frame, text="Настройки", font=("Verdana", 20, 'bold'), fg='#08224a')
+    header.pack(pady=20, padx=500)
 
-    def set_country():
+    # Country selection label
+    country_label = Label(content_frame, text="Выбрать страну", font=("Verdana", 14), fg='#08224a')
+    country_label.pack(padx=400, pady=(10, 0), anchor='w')  # Align to the west
+
+    # Country selection dropdown
+    country_var = StringVar(value=current_country)
+    country_dropdown = ttk.Combobox(content_frame,
+                                    textvariable=country_var,
+                                    values=country_names,
+                                    state='normal',
+                                    font=("Arial", 11),
+                                    width=20)
+    country_dropdown.pack(padx=20, pady=10)
+
+    # Year selection label
+    year_label = Label(content_frame, text="Выбрать год", font=("Verdana", 14), fg='#08224a')
+    year_label.pack(padx=400, pady=(10, 0), anchor='w')  # Align to the west
+
+    # Year selection dropdown
+    selected_year_var = StringVar(value=str(current_year))
+    year_dropdown = ttk.Combobox(
+        content_frame,
+        textvariable=selected_year_var,
+        values=[str(year) for year in range(2021, 2026)],
+        state="readonly",
+        font=("Arial", 11),
+        width=20
+    )
+    year_dropdown.pack(padx=20, pady=10)
+
+    # Function to set country and year when button is clicked
+    def apply_settings():
         global current_country
-        current_country = country_var.get()  # Update the global country variable
+        current_country = country_var.get()
+        update_year(int(selected_year_var.get()))  # Apply the selected year
         clear_content()
-        default_home()  # Return to the default home view
+        default_home()
 
-    select_button = Button(content_frame, text="Выбрать", command=set_country)
+    # Button to apply the settings
+    select_button = Button(content_frame, text="Выбрать", command=apply_settings)
     select_button.pack(pady=10)
+
+    # Note: No need for column configuration as we are using pack
+
+
+
 
 def clear_content():
     for widget in content_frame.winfo_children():
