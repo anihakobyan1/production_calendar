@@ -155,7 +155,7 @@ def get_preholidays(year):
 
 
 country_names = ['Australia', 'Canada', 'India', 'Ireland', 'New-Zealand',
- 'United-Kingdom', 'United-States', 'Argentina', 'Brazil',
+ 'UK', 'United-States', 'Argentina', 'Brazil',
  'China', 'France', 'Germany', 'Greece', 'Italy',
  'Japan', 'Mexico', 'Netherlands', 'Russia', 'South-Africa',
  'South-Korea', 'Spain', 'Sweden', 'Switzerland',

@@ -2,8 +2,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from PIL import ImageTk, Image
-from calendar_full import CalendarApp
-from calendar_quarter import QuarterCalendar
+from calendar_full import CalendarApp, QuarterCalendar
 from table_quarter import TableQuarter
 from datetime import datetime
 from holiday_fetcher import country_names
