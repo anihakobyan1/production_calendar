@@ -1,49 +1,55 @@
 import tkinter as tk
 from calendar import monthrange
-from holiday_fetcher import get_holidays, get_preholidays  # Ensure this is available in your environment
+from holiday_fetcher import get_holidays, get_preholidays
+
+# Основные цвета для интерфейса
+main_color = '#e6f2fc'
+holiday_cl = '#5da2e3'
+
 
 class TableQuarter:
     def __init__(self, master, country=None, year=2024, start_month=1, special_days=None, full=False):
         self.master = master
         self.year = year
-        self.country = country.lower()
+        self.country = country.lower() if country else None
         self.start_month = start_month
         self.special_days = special_days if special_days else {}
         self.full_year = full
 
-        # Fetch holidays once and store them as an instance variable
+        # Получаем праздники один раз и сохраняем их как переменную экземпляра
         self.holidays = get_holidays(year, country)
 
-        # Only fetch pre-holidays if country is provided
-        if self.country:
-            self.preholidays = get_preholidays(year)
-        else:
-            self.preholidays = []  # Or set to None, depending on your logic
+        # Получаем предпраздничные дни только если указана страна
+        self.preholidays = get_preholidays(year) if self.country else []
 
-        # Create a frame for the table
-        self.table_frame = tk.Frame(self.master)
+        # Создаем фрейм для таблицы
+        self.table_frame = tk.Frame(self.master, bg=main_color)
         self.table_frame.pack(fill=tk.BOTH, expand=True)
 
-        # Prepare the data and create the table
+        # Подготавливаем данные и создаем таблицу
         self.data = self.prepare_data()
         self.create_table()
 
     def calculate_month(self, month):
+        # Получаем количество дней в месяце и первый день месяца
         start_day, days_in_month = monthrange(self.year, month)
         non_work_days = 0
 
+        # Определяем праздничные и предпраздничные дни для текущего месяца
         holidays_this_month = {holiday.day for holiday in self.holidays if holiday.month == month}
         preholidays_this_month = {preholiday.day for preholiday in self.preholidays if preholiday.month == month}
 
+        # Подсчитываем нерабочие дни (выходные)
         for day in range(1, days_in_month + 1):
             day_of_week = (start_day + day - 1) % 7
-            if day_of_week in (5, 6):  # Saturday or Sunday
+            if day_of_week in (5, 6):  # Суббота или воскресенье
                 if day not in holidays_this_month:
                     non_work_days += 1
 
+        # Вычисляем рабочие дни
         calc_work_days = days_in_month - (len(holidays_this_month) + non_work_days)
 
-        # Only add pre-holidays if the country is Russia
+        # Специальная логика для России
         if self.country == 'russia':
             for day, m in self.special_days.items():
                 if m == month:
@@ -55,11 +61,9 @@ class TableQuarter:
     def prepare_data(self):
         columns = ['Количество дней']
         calc_days, work_days, holi_days = [], [], []
-        hours_40 = []
-        hours_36 = []
-        hours_24 = []
+        hours_40, hours_36, hours_24 = [], [], []
 
-        # Define columns based on whether it's a full year or not
+        # Определяем колонки в зависимости от того, полный год или нет
         if not self.full_year:
             month_names = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
                            "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
@@ -68,7 +72,7 @@ class TableQuarter:
                 columns.append(month_names[month - 1])
             columns.append("Квартал")
 
-            # Calculate days for the specified three months
+            # Вычисляем дни для указанных трех месяцев
             for month_in in range(3):
                 month = (self.start_month + month_in - 1) % 12 + 1
                 days, work, holidays, preholidays = self.calculate_month(month)
@@ -76,12 +80,13 @@ class TableQuarter:
                 work_days.append(work)
                 holi_days.append(holidays)
 
-                # Calculate hours
+                # Вычисляем часы
                 hours_40.append((work * 8) - (len(preholidays) if self.country == 'russia' else 0))
                 hours_36.append((work * 7.2) - (len(preholidays) if self.country == 'russia' else 0))
                 hours_24.append((work * 4.8) - (len(preholidays) if self.country == 'russia' else 0))
 
         else:
+            # Для полного года добавляем колонки для каждого квартала
             columns.extend(['I квартал', 'II квартал', 'III квартал', 'IV квартал', 'Итог'])
             for i in range(4):
                 days, work, holidays, preholidays = 0, 0, 0, []
@@ -97,15 +102,15 @@ class TableQuarter:
                 work_days.append(work)
                 holi_days.append(holidays)
 
-                # Calculate hours for the quarter
+                # Вычисляем часы для квартала
                 hours_40.append((work * 8) - (len(preholidays) if self.country == 'russia' else 0))
                 hours_36.append((work * 7.2) - (len(preholidays) if self.country == 'russia' else 0))
                 hours_24.append((work * 4.8) - (len(preholidays) if self.country == 'russia' else 0))
 
         data = []
-        data.append(columns)  # Add headers
+        data.append(columns)
 
-        # Append calculated data to the data list
+        # Добавляем данные в таблицу
         data.append(["Календарные"] + calc_days + [sum(calc_days)])
         data.append(["Рабочие"] + work_days + [sum(work_days)])
         data.append(["Выходные, праздники"] + holi_days + [sum(holi_days)])
@@ -117,25 +122,26 @@ class TableQuarter:
         return data
 
     def create_table(self):
+        # Создаем таблицу на основе подготовленных данных
         for i, row in enumerate(self.data):
             for j, item in enumerate(row):
                 if j == 0:
                     label = tk.Label(self.table_frame, text=item, borderwidth=1, relief="flat", highlightthickness=1,
-                                     padx=10, pady=5,
+                                     padx=10, pady=5, highlightcolor=main_color,
                                      anchor=tk.W, font=('Arial', 11), bg='white', fg='#061b3b')
                 elif i == 0 and j in range(1, len(row)):
                     label = tk.Label(self.table_frame, text=item, borderwidth=1, relief="flat", highlightthickness=1,
-                                     pady=5,
+                                     highlightcolor=main_color, pady=5,
                                      font=('Arial', 11), fg='#061b3b', bg='white')
                 else:
                     label = tk.Label(self.table_frame, text=item, borderwidth=1, relief="flat", highlightthickness=1,
-                                     padx=10, pady=5, font=('Arial', 11), bg='#c9def2')
+                                     highlightcolor=main_color,
+                                     padx=10, pady=5, font=('Arial', 12), bg='#a0caf2', fg='#061b3b')
                 if j == 0 and i in (0, 4):
-                    label = tk.Label(self.table_frame, text=item, borderwidth=1, relief="flat", highlightthickness=1,
-                                     padx=10, pady=5,
-                                     anchor=tk.W, font=('Arial', 11), fg='#061b3b')
+                    label = tk.Label(self.table_frame, text=item, padx=10, pady=5,
+                                     anchor=tk.W, font=('Arial', 11), fg='#061b3b', bg=main_color)
                 label.grid(row=i, column=j, sticky="nsew")
 
-        # Configure grid weights to make it responsive
+        # Настраиваем веса колонок для адаптивности
         for i in range(len(self.data[0])):
             self.table_frame.grid_columnconfigure(i, weight=1)
