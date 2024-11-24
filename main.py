@@ -9,7 +9,6 @@ import os
 import sys
 
 def resource_path(relative_path):
-
     try:
         base_path = sys._MEIPASS
     except Exception:
@@ -182,7 +181,7 @@ def clear_content():
 w = Tk()
 screen_width = 1280
 screen_height = 720
-img = PhotoImage(file=resource_path('image/calendar_icon_main.png'))
+img = PhotoImage(file=resource_path("image/calendar_icon_main.png"))
 w.iconphoto(False, img)
 w.config(bg=main_color)
 w.resizable(False, False)
