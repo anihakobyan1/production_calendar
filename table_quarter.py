@@ -24,7 +24,7 @@ class TableQuarter:
 
         # Создаем фрейм для таблицы
         self.table_frame = tk.Frame(self.master, bg=main_color)
-        self.table_frame.pack(fill=tk.BOTH, expand=True)
+        self.table_frame.pack(fill=tk.BOTH, expand=True, side=tk.TOP)
 
         # Подготавливаем данные и создаем таблицу
         self.data = self.prepare_data()
@@ -122,24 +122,28 @@ class TableQuarter:
         return data
 
     def create_table(self):
+        # Clear the existing table before creating a new one
+        for widget in self.table_frame.winfo_children():
+            widget.destroy()
+
         # Создаем таблицу на основе подготовленных данных
         for i, row in enumerate(self.data):
             for j, item in enumerate(row):
                 if j == 0:
                     label = tk.Label(self.table_frame, text=item, borderwidth=1, relief="flat", highlightthickness=1,
                                      padx=10, pady=5, highlightcolor=main_color,
-                                     anchor=tk.W, font=('Arial', 11), bg='white', fg='#061b3b')
+                                     anchor=tk.W, font=('Arial', 12), bg='white', fg='#061b3b')
                 elif i == 0 and j in range(1, len(row)):
                     label = tk.Label(self.table_frame, text=item, borderwidth=1, relief="flat", highlightthickness=1,
                                      highlightcolor=main_color, pady=5,
-                                     font=('Arial', 11), fg='#061b3b', bg='white')
+                                     font=('Arial', 12), fg='#061b3b', bg='white')
                 else:
                     label = tk.Label(self.table_frame, text=item, borderwidth=1, relief="flat", highlightthickness=1,
                                      highlightcolor=main_color,
                                      padx=10, pady=5, font=('Arial', 12), bg='#a0caf2', fg='#061b3b')
                 if j == 0 and i in (0, 4):
                     label = tk.Label(self.table_frame, text=item, padx=10, pady=5,
-                                     anchor=tk.W, font=('Arial', 11), fg='#061b3b', bg=main_color)
+                                     anchor=tk.W, font=('Arial', 13, 'bold'), fg='#061b3b', bg=main_color)
                 label.grid(row=i, column=j, sticky="nsew")
 
         # Настраиваем веса колонок для адаптивности

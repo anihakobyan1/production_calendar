@@ -1,7 +1,7 @@
 from datetime import datetime
 from tkinter import Frame, Label, StringVar
 from calendar import monthrange
-from holiday_fetcher import get_holidays, get_preholidays
+from holiday_fetcher import get_holidays, get_preholidays, country_names
 
 # Константы цветов
 main_color = '#e6f2fc'
@@ -99,7 +99,7 @@ class BaseCalendar:
             if day in days:
                 day_label.config(bg=holiday_cl, fg=month_frame_cl)
 
-            # Обозначаем предпраздники только для России
+            # Обозначаем пред праздники только для России
             if self.country == 'russia' and day in preholiday_days:
                 day_label.config(text=f'{day}*', bg=month_frame_cl, fg=day_label_cl)
 
@@ -129,7 +129,7 @@ class CalendarApp(BaseCalendar):
         # Создаем метку с названием выбранного года
         self.year_label = Label(parent, text=f"Производственный календарь {self.selected_year}",
                                 font=("Verdana", 20, 'bold'), fg=header_cl, bg=main_color)
-        self.year_label.pack(pady=10)
+        self.year_label.pack(pady=20)
 
         # Создаем переменную для выбора года
         self.selected_year_var = StringVar(value="Выберите год")
@@ -151,6 +151,7 @@ class CalendarApp(BaseCalendar):
 class QuarterCalendar(BaseCalendar):
     def __init__(self, parent, start_month, year, country=None, bg_color=main_color):
         super().__init__(parent, year, country)
+        self.country_names = country_names
         self.year = year
         self.start_month = start_month
         quarter_names = {1: 'I', 4: 'II', 7: 'III', 10: 'IV'}
@@ -166,7 +167,7 @@ class QuarterCalendar(BaseCalendar):
             self.preholidays = []  # Или установите None, в зависимости от вашей логики
 
         # Create labels
-        label_year = Label(parent, text=f'Страна: {self.country.capitalize()}  Год: {year}',
+        label_year = Label(parent, text=f'Страна: {self.country_names[country].capitalize()}  Год: {year}',
                            font=("Verdana", 13, 'bold'), fg=header_cl, bg=main_color)
         label_year.pack(padx=20, anchor='ne')
 
