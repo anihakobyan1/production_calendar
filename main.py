@@ -96,7 +96,7 @@ def show_year():
     clear_content()
 
     # Создаем заголовок с названием страны и года
-    label_year = Label(content_frame, text=f'Страна: {country_names[current_country].capitalize()}  Год: {current_year}',
+    label_year = Label(content_frame, text=f'Страна: {country_names[current_country]}  Год: {current_year}',
                        font=("Verdana", 13, 'bold'), fg='#08224a', bg=main_color)
     label_year.pack(padx=20, anchor='ne')
 

@@ -161,7 +161,7 @@ country_names = {
     'Ireland': 'Ирландия',
     'New-Zealand': 'Новая Зеландия',
     'UK': 'Великобритания',
-    'United-States': 'США',
+    'US': 'США',
     'Argentina': 'Аргентина',
     'Brazil': 'Бразилия',
     'China': 'Китай',
@@ -265,7 +265,11 @@ country_names = {
     'Paraguay': 'Парагвай',
     'Guyana': 'Гайана',
     'Suriname': 'Суринам',
-    'French-Guiana': 'Французская Гвиана'
+    'French-Guiana': 'Французская Гвиана',
+    'Armenia': 'Армения'
 }
+
+
+country_names = dict(sorted(country_names.items(), key=lambda item: item[1], reverse=True))
 
 

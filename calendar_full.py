@@ -89,7 +89,7 @@ class BaseCalendar:
             # Выделяем текущий день
             if (day == self.today_day and month == self.today_month and
                     self.selected_year == self.today_year):
-                day_label.config(font=("Poppins", 10, "bold"))
+                day_label.config(borderwidth=1, font=("Poppins", 10, "bold"))
 
             # Обозначаем выходные дни
             if day_of_week in (5, 6):  # Суббота или воскресенье
@@ -104,7 +104,8 @@ class BaseCalendar:
                 day_label.config(text=f'{day}*', bg=month_frame_cl, fg=day_label_cl)
 
             # Обозначаем особые даты
-            if self.selected_year == 2024 and day in special_dates and special_dates[day] == month:
+            if (self.selected_year == 2024 and day in special_dates and special_dates[day] == month and
+                    self.country.lower() == 'russia'):
                 day_label.config(bg=month_frame_cl, fg=day_label_cl)
 
             # Переход на новую строку после субботы
@@ -113,7 +114,8 @@ class BaseCalendar:
 
 
 class CalendarApp(BaseCalendar):
-    def __init__(self, parent, selected_year, update_year_callback, country=None, bg_color=main_color):
+    def __init__(self, parent, selected_year, update_year_callback,
+                 country=None, bg_color=main_color):
         super().__init__(parent, selected_year, country)
         self.update_year_callback = update_year_callback
 
@@ -167,7 +169,7 @@ class QuarterCalendar(BaseCalendar):
             self.preholidays = []  # Или установите None, в зависимости от вашей логики
 
         # Create labels
-        label_year = Label(parent, text=f'Страна: {self.country_names[country].capitalize()}  Год: {year}',
+        label_year = Label(parent, text=f'Страна: {self.country_names[country]}  Год: {year}',
                            font=("Verdana", 13, 'bold'), fg=header_cl, bg=main_color)
         label_year.pack(padx=20, anchor='ne')
 
