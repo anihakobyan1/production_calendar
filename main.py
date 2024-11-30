@@ -177,7 +177,7 @@ def clear_content():
     for widget in content_frame.winfo_children():
         widget.destroy()
 
-# Основная настройка приложения
+# Основная настройка приложенияp
 w = Tk()
 screen_width = 1280
 screen_height = 720

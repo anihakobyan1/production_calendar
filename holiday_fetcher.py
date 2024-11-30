@@ -61,7 +61,7 @@ def get_holidays(year, country):
         if year == 2020:
             year = '2020b'  # Специальный случай для 2020 года
         consultant_url = f'https://www.consultant.ru/law/ref/calendar/proizvodstvennye/{year}/'
-
+        year = '2020'
         try:
             response = session.get(consultant_url)
             response.raise_for_status()

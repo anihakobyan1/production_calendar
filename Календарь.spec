@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:\\Users\\Hp\\Desktop\\Calendar\\image\\calendar_icon_main.png', 'image'), ('C:\\Users\\Hp\\Desktop\\Calendar\\image\\next_arrow.png', 'image'), ('C:\\Users\\Hp\\Desktop\\Calendar\\image\\prev_arrow.png', 'image'), ('C:\\Users\\Hp\\Desktop\\Calendar\\image\\close_icon.png', 'image'), ('C:\\Users\\Hp\\Desktop\\Calendar\\image\\open_icon.png', 'image')],
+    datas=[('C:\\Users\\Hp\\Desktop\\Calendar\\image\\calendar_icon_main.png', 'image'), ('C:\\Users\\Hp\\Desktop\\Calendar\\image\\close_icon.png', 'image'), ('C:\\Users\\Hp\\Desktop\\Calendar\\image\\next_arrow.png', 'image'), ('C:\\Users\\Hp\\Desktop\\Calendar\\image\\open_icon.png', 'image'), ('C:\\Users\\Hp\\Desktop\\Calendar\\image\\prev_arrow.png', 'image')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
